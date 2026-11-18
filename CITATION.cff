@@ -1,0 +1,50 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the article below and the code."
+title: "MCR-ALS and MSPC monitoring of Septoria tritici blotch in wheat leaves: analysis code"
+type: software
+version: "1.0"
+license: MIT
+authors:
+  - family-names: Latchoumane
+    given-names: Lorraine
+    affiliation: "AGAP and ITAP, INRAE, Montpellier, France"
+  - family-names: Ballini
+    given-names: Elsa
+    affiliation: "PHIM, Institut Agro, Montpellier, France"
+  - family-names: Ecarnot
+    given-names: Martin
+    affiliation: "AGAP, INRAE, Montpellier, France"
+  - family-names: Roger
+    given-names: Jean-Michel
+    affiliation: "ITAP, INRAE, Montpellier, France"
+  - family-names: Bendoula
+    given-names: Ryad
+    affiliation: "ITAP, INRAE, Montpellier, France"
+  - family-names: Mas Garcia
+    given-names: Silvia
+    affiliation: "ITAP, INRAE, Montpellier, France"
+references:
+  - type: dataset
+    title: "Hyperspectral images of durum wheat leaves inoculated with Zymoseptoria tritici"
+    doi: 10.57745/WVP0FJ
+    authors:
+      - family-names: Latchoumane
+        given-names: Lorraine
+preferred-citation:
+  type: article
+  title: "Process monitoring of Septoria tritici blotch in wheat leaves using hyperspectral imaging, Multivariate Curve Resolution-Alternating Least Squares and Multivariate Statistical Process Control"
+  authors:
+    - family-names: Latchoumane
+      given-names: Lorraine
+    - family-names: Ballini
+      given-names: Elsa
+    - family-names: Ecarnot
+      given-names: Martin
+    - family-names: Roger
+      given-names: Jean-Michel
+    - family-names: Bendoula
+      given-names: Ryad
+    - family-names: Mas Garcia
+      given-names: Silvia
+  journal: "Computers and Electronics in Agriculture"
+  status: submitted
