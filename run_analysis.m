@@ -1127,62 +1127,120 @@ close(gcf);
 end
 
 function fig6_maps(cfg)
-% Figure 6a: pixel maps (red = assigned to the infection-associated class)
+% Figure 6: (a) pixel maps (red = assigned to the infection-associated
+% class, green = other leaf pixels); (b) colour composites of the same leaf
+% pixels (bands near 640, 550 and 460 nm), cropped, padded and stretched
+% exactly as the maps
 run_mode = mode_name(cfg);
 load(fullfile(cfg.output_folder, sprintf('info_table_pix_%s.mat', run_mode)), 'info_table_pix');
 load(cfg.alldata_file, 'metadataG','metadataD','G_pixin1','G_pixin2','G_pixin3','G_pixout', ...
-     'D_pixin1','D_pixin2','D_pixin3','D_pixout');
-rows = {32, 'G', 'EPO67 inoculated';
-        38, 'G', 'EPO68 inoculated';
-        35, 'G', 'EPO67 mock-inoculated';
-        29, 'G', 'EPO68 mock-inoculated'};
+     'D_pixin1','D_pixin2','D_pixin3','D_pixout','G_Z1','G_Z2','G_Z3','D_Z1','D_Z2','D_Z3');
+[~, wl] = full_model_profiles;
+rgb_nm = [640 550 460];                  % red, green and blue channels
+band_rgb = cell(1, 3);
+for k = 1:3
+    [~, ib] = sort(abs(wl - rgb_nm(k)));
+    band_rgb{k} = sort(ib(1:11));        % mean of the 11 closest bands
+end
+rows = {32, 'G', sprintf('EPO67\ninoculated');
+        38, 'G', sprintf('EPO68\ninoculated');
+        35, 'G', sprintf('EPO67\nmock-inoculated');
+        29, 'G', sprintf('EPO68\nmock-inoculated')};
 dpi_show = [10 12 13 14 16];
 [~, j] = ismember(dpi_show, cfg.dpi);
 dates_show = cfg.dates(j);
 margin = 5;
 stretch = 4;   % horizontal stretching factor of the maps (state it in the caption)
 nf = size(rows, 1); nd = numel(dpi_show);
-% first pass: images cropped to the leaves (rows: whole height; columns:
-% from the first to the last leaf column)
-imgs = cell(nf, nd); w = 0;
+% first pass: maps and composites cropped to the leaves (rows: whole
+% height; columns: from the first to the last leaf column of the map)
+imgs = cell(nf, nd); comps = cell(nf, nd); w = 0;
 for f = 1:nf
     for d = 1:nd
         try
             img = rebuild_map_image(rows{f, 1}, dates_show{d}, rows{f, 2}, metadataG, metadataD, ...
                 G_pixin1, G_pixin2, G_pixin3, G_pixout, D_pixin1, D_pixin2, D_pixin3, D_pixout, info_table_pix, 1);
             ch = find(any(any(img > 0, 3), 1));
-            imgs{f, d} = img(:, max(ch(1) - margin, 1):min(ch(end) + margin, size(img, 2)), :);
-            w = max(w, size(imgs{f, d}, 2));
+            cols = max(ch(1) - margin, 1):min(ch(end) + margin, size(img, 2));
+            imgs{f, d} = img(:, cols, :);
+            if strcmpi(rows{f, 2}, 'G')
+                comp = composite_image(rows{f, 1}, dates_show{d}, metadataG, ...
+                    {G_pixin1, G_pixin2, G_pixin3}, {G_Z1, G_Z2, G_Z3}, band_rgb, size(img, 1), size(img, 2));
+            else
+                comp = composite_image(rows{f, 1}, dates_show{d}, metadataD, ...
+                    {D_pixin1, D_pixin2, D_pixin3}, {D_Z1, D_Z2, D_Z3}, band_rgb, size(img, 1), size(img, 2));
+            end
+            comps{f, d} = comp(:, cols, :);
+            w = max(w, numel(cols));
         catch ME
             fprintf('Pot %d, %s, %d dpi: %s\n', rows{f, 1}, rows{f, 2}, dpi_show(d), ME.message);
         end
     end
 end
+% one brightness scale for all composites (99th percentile of the leaf
+% pixels) and a gamma of 0.6, so that the colours can be compared
+allv = cellfun(@(c) c(c > 0), comps, 'UniformOutput', false);
+allv = vertcat(allv{:});
+sc = prctile(allv, 99);
+for k = 1:numel(comps)
+    if ~isempty(comps{k})
+        comps{k} = min(comps{k} / sc, 1) .^ 0.6;
+    end
+end
 % second pass: all panels padded to the same width (black background)
-figure('Color', 'w', 'Position', [50 50 230 * nd 330 * nf]);
-tl = tiledlayout(nf, nd, 'TileSpacing', 'compact', 'Padding', 'compact');
-for f = 1:nf
-    for d = 1:nd
-        ax = nexttile(tl);
-        if isempty(imgs{f, d})
-            text(ax, 0.5, 0.5, 'no image', 'HorizontalAlignment', 'center');
-        else
-            img = imgs{f, d};
-            pad = w - size(img, 2);
-            img = [zeros(size(img, 1), floor(pad / 2), 3), img, zeros(size(img, 1), ceil(pad / 2), 3)];
-            % leaves are narrow vertical strips: horizontal stretching
-            % (nearest neighbour, no new colours) so that they can be seen
-            image(ax, repelem(img, 1, stretch, 1));
-            axis(ax, 'image');
-        end
-        set(ax, 'XTick', [], 'YTick', [], 'XColor', 'none', 'YColor', 'none', 'Box', 'off');
-        if f == 1, title(ax, sprintf('%d dpi', dpi_show(d)), 'FontSize', 12); end
-        if d == 1
-            ylabel(ax, sprintf('%s\n(pot %d)', rows{f, 3}, rows{f, 1}), 'Color', 'k', 'FontSize', 11);
-            ax.YLabel.Visible = 'on';
+figure('Color', 'w', 'Position', [50 50 230 * nd 330 * 2 * nf]);
+tl = tiledlayout(2 * nf, nd, 'TileSpacing', 'compact', 'Padding', 'compact');
+for part = 1:2
+    if part == 1, P = imgs; else, P = comps; end
+    for f = 1:nf
+        for d = 1:nd
+            ax = nexttile(tl);
+            if isempty(P{f, d})
+                text(ax, 0.5, 0.5, 'no image', 'HorizontalAlignment', 'center');
+            else
+                img = P{f, d};
+                pad = w - size(img, 2);
+                img = [zeros(size(img, 1), floor(pad / 2), 3), img, zeros(size(img, 1), ceil(pad / 2), 3)];
+                % leaves are narrow vertical strips: horizontal stretching
+                % (nearest neighbour, no new colours) so that they can be seen
+                image(ax, repelem(img, 1, stretch, 1));
+                axis(ax, 'image');
+            end
+            set(ax, 'XTick', [], 'YTick', [], 'XColor', 'none', 'YColor', 'none', 'Box', 'off');
+            if f == 1
+                title(ax, sprintf('%d dpi', dpi_show(d)), 'FontSize', 12);
+                if d == 1
+                    text(ax, -0.03, 1.02, sprintf('(%s)', char('a' + part - 1)), 'Units', 'normalized', ...
+                        'HorizontalAlignment', 'right', 'VerticalAlignment', 'bottom', ...
+                        'FontSize', 13, 'FontWeight', 'bold');
+                end
+            end
+            if d == 1
+                ylabel(ax, sprintf('%s\n(pot %d)', rows{f, 3}, rows{f, 1}), 'Color', 'k', 'FontSize', 11);
+                ax.YLabel.Visible = 'on';
+            end
         end
     end
 end
 exportgraphics(gcf, fullfile(cfg.output_folder, sprintf('Fig6_maps_%s.png', run_mode)), 'Resolution', 300);
 close(gcf);
+end
+
+function comp = composite_image(pot, date, meta, pixin, Z, band_rgb, nRows, nCols)
+% Colour composite (reflectance, not scaled) of the leaf pixels of one image
+idx = find(strcmp({meta.fecha}, date) & [meta.planta] == pot, 1);
+if isempty(idx)
+    error('Pot %d, date %s not found.', pot, date);
+end
+r = meta(idx).fila; c = meta(idx).columna;
+comp = zeros(nRows * nCols, 3);
+for i = 1:3
+    pix = pixin{i}{r, c};
+    if isempty(pix), continue; end
+    S = Z{i}{r, c};
+    for k = 1:3
+        comp(pix, k) = mean(S(:, band_rgb{k}), 2);
+    end
+end
+comp = reshape(max(comp, 0), nRows, nCols, 3);
 end
