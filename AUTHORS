@@ -1,0 +1,18 @@
+Authors of STB-MCR-MSPC (version 1.0)
+
+Silvia Mas Garcia (ITAP, INRAE, Montpellier, France)
+    Development of the analysis and preprocessing code; maintainer.
+
+Lorraine Latchoumane (AGAP and ITAP, INRAE, Montpellier, France)
+    Original preprocessing scripts (with H. Villesseche) and data.
+
+Elsa Ballini (PHIM, Institut Agro, Montpellier, France)
+Martin Ecarnot (AGAP, INRAE, Montpellier, France)
+Jean-Michel Roger (ITAP, INRAE, Montpellier, France)
+Ryad Bendoula (ITAP, INRAE, Montpellier, France)
+    Scientific support and supervision.
+
+Third-party code included
+    preprocessing/hsi_toolbox/hsread.m and hsreadheader.m: reading of the
+    HySpex images (hsread written by X. Hadoux, 2012), included with the
+    agreement of R. Bendoula.
