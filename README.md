@@ -73,7 +73,7 @@ Figures are saved as 300-dpi PNG files in Times New Roman. Files named `FigS_met
 
 ## Pots
 
-The analysis uses the 20 pots of the original selection of the experiment. They are pots 25-48, in which both sides of the pot were imaged at least until 13 dpi (in pots 1-24, the leaves of one or both sides were sampled for RNA analyses at 4, 7 or 10 dpi; Latchoumane et al., 2025, Data in Brief 59, 111404), except pots 30, 31, 39 and 40, which were not retained in the original selection (the leaves of pots 30, 31 and 40 have a low confidence level of their infection status in the database). The pots are set in `default_config` (`cfg.inoc_EPO67`, `cfg.mock_EPO67`, `cfg.inoc_EPO68`, `cfg.mock_EPO68`) and in `pots_used` in `run_preprocessing.m`:
+The analysis uses the 20 pots of the original selection of the experiment. They are pots 25-48, in which both sides of the pot were imaged at least until 13 dpi (in pots 1-24, the leaves of one or both sides were sampled for RNA analyses at 4, 7 or 10 dpi; Latchoumane et al., 2025, Data in Brief 59, 111404), except pots 30, 31, 39 and 40, whose infection status was uncertain (low confidence level in the database for pots 30, 31 and 40, probable annotation error for pot 39). Using only pots with both sides keeps the pot, the experimental unit, complete. The pots are set in `default_config` (`cfg.inoc_EPO67`, `cfg.mock_EPO67`, `cfg.inoc_EPO68`, `cfg.mock_EPO68`) and in `pots_used` in `run_preprocessing.m`:
 
 | Genotype | Treatment | Pots |
 |---|---|---|
