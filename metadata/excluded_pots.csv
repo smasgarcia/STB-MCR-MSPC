@@ -1,0 +1,3 @@
+pot,genotype,treatment,reason
+36,EPO67,mock,Leaves outside the healthy reference before inoculation (one-sided binomial test at -1 and 0 dpi; iteration 1 of the check)
+46,EPO67,mock,Leaves outside the healthy reference before inoculation (one-sided binomial test at -1 and 0 dpi; iteration 2 of the check)

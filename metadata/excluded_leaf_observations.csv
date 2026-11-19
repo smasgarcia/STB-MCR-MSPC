@@ -1,0 +1,6 @@
+pot,side,leaf,date,dpi,genotype,treatment,npix,pct_pixels_on_leaf
+25,G,Leaf1G,20210329,17,EPO68,inoculated,2960,46.5
+25,G,Leaf2G,20210329,17,EPO68,inoculated,1580,2.7
+25,G,Leaf3G,20210329,17,EPO68,inoculated,3063,53.2
+33,D,Leaf3D,20210320,8,EPO67,inoculated,5189,10.8
+33,D,Leaf3D,20210322,10,EPO67,inoculated,5129,38.3

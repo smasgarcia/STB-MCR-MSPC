@@ -1,0 +1,5 @@
+pot,side,leaf,genotype,treatment,n_observations
+42,G,Leaf1G,EPO68,mock-inoculated,15
+42,G,Leaf2G,EPO68,mock-inoculated,15
+42,G,Leaf3G,EPO68,mock-inoculated,15
+44,D,Leaf2D,EPO67,inoculated,15
